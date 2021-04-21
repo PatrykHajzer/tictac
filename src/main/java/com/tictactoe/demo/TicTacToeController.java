@@ -15,16 +15,16 @@ public class TicTacToeController {
     }
 
     @GetMapping("/game")
-    public BoardResponse getBoard(){
-        return BoardResponse.builder()
+    public GameResponse getBoard(){
+        return GameResponse.builder()
                 .boardList(ticTacToeService.getBoard())
-                .message("New Game Created")
+                .message(ticTacToeService.infoResponse())
                 .build();
     }
 
     @PostMapping("/game")
-    public BoardResponse makeMove(@RequestBody Board board){
-        return BoardResponse.builder()
+    public GameResponse makeMove(@RequestBody Board board){
+        return GameResponse.builder()
                 .boardList(ticTacToeService.makeMove(board))
                 .message(ticTacToeService.infoResponse())
                 .build();

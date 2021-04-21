@@ -3,11 +3,9 @@ package com.tictactoe.demo;
 import com.tictactoe.demo.models.Board;
 import com.tictactoe.demo.models.Game;
 import com.tictactoe.demo.models.Mark;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.List;
 
 
 @Service
@@ -23,41 +21,70 @@ public class TicTacToeService {
         return game.getBoard();
     }
 
-    public void updateBoard(Board board) {
+    public void makeMove(Board board) {
+        playerMove(board);
+        computerMove();
+    }
+
+    public void playerMove(Board board) {
+        game.setState(Game.GameState.PlayerMove);
         game.setBoard(board);
+        checkGameStatusFor(Mark.X);
     }
 
-    public Board makeMove(Board board) {
-        updateBoard(board);
-        checkStatus();
-        makeResponseMove();
-        checkStatus();
+    private void computerMove() {
+        game.setState(Game.GameState.ComputerMove);
+        calculateComputerMove();
     }
 
-    private void makeResponseMove() {
-
-    }
-
-    public String infoResponse() {
-        return checkStatus();
-    }
-
-    private String checkStatus() {
-        checkWinningCondition();
-        checkDrawCondition();
-    }
-
-    private void checkDrawCondition() {
-        if (noMoreMovesCondition()) {
-
+    private void calculateComputerMove() {
+        if(isFirstMove()) {
+            randomComputerMark();
         }
     }
 
-    private boolean noMoreMovesCondition() {
-        return false;
+    private void randomComputerMark() {
+
     }
 
-    private void checkWinningCondition() {
+    private boolean isFirstMove() {
+        return game.getBoard().getBoardList().stream().noneMatch(el -> el.equals(Mark.O));
+    }
 
+    public String infoResponse() {
+        return game.getGameInfo();
+    }
+
+    private void checkGameStatusFor(Mark markType) {
+        if (checkWinningCondition(markType)) {
+            game.setState(Game.GameState.End);
+            game.setGameInfo("Player: " + markType + " won");
+        }
+        if (checkDrawCondition()){
+            game.setState(Game.GameState.End);
+            game.setGameInfo("We have draw");
+        }
+    }
+
+    private boolean checkDrawCondition() {
+        List<Mark> boardList = game.getBoard().getBoardList();
+        return boardList.stream().noneMatch(el -> el.equals(Mark.blank));
+    }
+
+    private boolean checkWinningCondition(Mark markType) {
+        List<Mark> boardList = game.getBoard().getBoardList();
+//        0 | 1 | 2
+//       -----------
+//        3 | 4 | 5
+//       -----------
+//        6 | 7 | 8
+        return boardList.get(0) == markType && boardList.get(1) == markType && boardList.get(2) == markType
+                || boardList.get(3) == markType && boardList.get(4) == markType && boardList.get(5) == markType
+                || boardList.get(6) == markType && boardList.get(7) == markType && boardList.get(8) == markType
+                || boardList.get(0) == markType && boardList.get(3) == markType && boardList.get(6) == markType
+                || boardList.get(1) == markType && boardList.get(4) == markType && boardList.get(7) == markType
+                || boardList.get(2) == markType && boardList.get(5) == markType && boardList.get(8) == markType
+                || boardList.get(0) == markType && boardList.get(4) == markType && boardList.get(8) == markType
+                || boardList.get(6) == markType && boardList.get(4) == markType && boardList.get(2) == markType;
     }
 }

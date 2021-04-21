@@ -1,25 +1,27 @@
 package com.tictactoe.demo.models;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.util.Arrays;
 
-@Getter
-@Setter
+@Data
 public class Game {
 
     private Board board;
-    private String message;
-    private Boolean endCondition;
+    private GameState state;
+    private String gameInfo;
+
+    public enum GameState {
+        PlayerMove, ComputerMove, Idle,  Start, End
+    }
+
 
     public Game() {
         this.board = createNewList();
-        this.message = null;
-        this.endCondition = false;
+        this.state = GameState.Start;
+        this.gameInfo = null;
     }
 
-    public Board createNewList() {
+    private Board createNewList() {
         return Board.builder()
                 .boardList(Arrays.asList(Mark.blank, Mark.blank, Mark.blank, Mark.blank, Mark.blank, Mark.blank, Mark.blank, Mark.blank, Mark.blank))
                 .build();
